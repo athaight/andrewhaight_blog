@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { unstable_noStore as noStore } from "next/cache";
 
 export type ContentType = "post" | "project";
 
@@ -48,6 +49,7 @@ function mapPost(row: PostRow): ContentItem {
 }
 
 export async function getPublishedContent(type?: ContentType) {
+  noStore();
   if (!supabase) return [];
 
   let query = supabase
@@ -72,6 +74,7 @@ export async function getPublishedContent(type?: ContentType) {
 }
 
 export async function getContentBySlug(slug: string) {
+  noStore();
   if (!supabase) return null;
 
   const { data, error } = await supabase
@@ -91,6 +94,7 @@ export async function getContentBySlug(slug: string) {
 }
 
 export async function searchPublishedContent(rawQuery: string) {
+  noStore();
   if (!supabase) return [];
 
   const query = rawQuery.trim().replace(/,/g, " ").replace(/[%_]/g, " ");
