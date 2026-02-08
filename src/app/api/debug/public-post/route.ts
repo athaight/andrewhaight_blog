@@ -21,19 +21,50 @@ export async function GET(request: NextRequest) {
   }
 
   const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  const { data, error } = await supabase
+  const { data: publishedRow, error: publishedError } = await supabase
     .from("posts")
     .select("id, title, slug, published, type")
     .eq("published", true)
     .eq("slug", slug)
     .single();
 
-  if (error) {
-    return NextResponse.json(
-      { error: error.message, code: error.code, details: error.details },
-      { status: 400 }
-    );
-  }
+  const { data: anyRow, error: anyError } = await supabase
+    .from("posts")
+    .select("id, title, slug, published, type")
+    .eq("slug", slug)
+    .maybeSingle();
 
-  return NextResponse.json({ data });
+  const { data: publishedList, error: listError } = await supabase
+    .from("posts")
+    .select("id, slug, published, type")
+    .eq("published", true)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  return NextResponse.json({
+    publishedRow,
+    publishedError: publishedError
+      ? {
+          message: publishedError.message,
+          code: publishedError.code,
+          details: publishedError.details,
+        }
+      : null,
+    anyRow,
+    anyError: anyError
+      ? {
+          message: anyError.message,
+          code: anyError.code,
+          details: anyError.details,
+        }
+      : null,
+    publishedList,
+    listError: listError
+      ? {
+          message: listError.message,
+          code: listError.code,
+          details: listError.details,
+        }
+      : null,
+  });
 }
