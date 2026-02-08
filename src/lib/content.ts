@@ -27,12 +27,21 @@ type PostRow = {
   created_at: string;
 };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey)
-  : null;
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return null;
+  }
+
+  return createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+}
 
 function mapPost(row: PostRow): ContentItem {
   return {
@@ -50,6 +59,7 @@ function mapPost(row: PostRow): ContentItem {
 
 export async function getPublishedContent(type?: ContentType) {
   noStore();
+  const supabase = getSupabaseClient();
   if (!supabase) return [];
 
   let query = supabase
@@ -75,6 +85,7 @@ export async function getPublishedContent(type?: ContentType) {
 
 export async function getContentBySlug(slug: string) {
   noStore();
+  const supabase = getSupabaseClient();
   if (!supabase) return null;
 
   const { data, error } = await supabase
@@ -95,6 +106,7 @@ export async function getContentBySlug(slug: string) {
 
 export async function searchPublishedContent(rawQuery: string) {
   noStore();
+  const supabase = getSupabaseClient();
   if (!supabase) return [];
 
   const query = rawQuery.trim().replace(/,/g, " ").replace(/[%_]/g, " ");
