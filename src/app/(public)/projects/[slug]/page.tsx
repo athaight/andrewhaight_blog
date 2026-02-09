@@ -7,6 +7,7 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  // Next.js provides params as a Promise in async route handlers.
   const { slug } = await params;
   const item = await getContentBySlug(slug, "project");
 
