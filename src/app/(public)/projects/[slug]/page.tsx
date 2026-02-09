@@ -5,9 +5,10 @@ import { getContentBySlug } from "@/lib/content";
 export default async function ProjectPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const item = await getContentBySlug(params.slug);
+  const { slug } = await params;
+  const item = await getContentBySlug(slug, "project");
 
   if (!item || item.type !== "project" || !item.published) {
     notFound();

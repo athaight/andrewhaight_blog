@@ -83,19 +83,27 @@ export async function getPublishedContent(type?: ContentType) {
   return data.map(mapPost);
 }
 
-export async function getContentBySlug(slug: string) {
+export async function getContentBySlug(slug: string, type?: ContentType) {
   noStore();
   const supabase = getSupabaseClient();
   if (!supabase) return null;
 
-  const { data, error } = await supabase
+  let query = supabase
     .from("posts")
     .select(
       "id, title, slug, content, excerpt, type, tags, published, created_at"
     )
     .eq("published", true)
-    .eq("slug", slug)
-    .single();
+    .eq("slug", slug);
+
+  if (type) {
+    query = query.eq("type", type);
+  }
+
+  const { data, error } = await query
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (error || !data) {
     return null;
