@@ -13,11 +13,6 @@ export default function AboutPage() {
           progress. I use it to keep experiments visible and share the work as
           it develops.
         </p>
-        <p>
-          For the MVP, this page is intentionally short. It will expand with
-          background, focus areas, and links once the content system is wired
-          up.
-        </p>
       </div>
     </div>
   );
