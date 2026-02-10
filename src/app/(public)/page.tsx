@@ -7,25 +7,25 @@ export default async function HomePage() {
   return (
     <div className="space-y-16">
       <section className="space-y-6">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[color:var(--muted)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted">
           Personal blog and portfolio
         </p>
-        <h1 className="text-4xl font-serif tracking-tight text-[color:var(--ink)] md:text-5xl">
+        <h1 className="text-4xl font-serif tracking-tight text-ink md:text-5xl">
           Notes, experiments, and projects in steady rotation.
         </h1>
-        <p className="max-w-2xl text-lg leading-7 text-[color:var(--muted)]">
+        <p className="max-w-2xl text-lg leading-7 text-muted">
           A minimal space for writing, project updates, and ideas in motion.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
             href="/posts"
-            className="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-[color:var(--ink)] transition hover:-translate-y-0.5"
+            className="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink transition hover:-translate-y-0.5"
           >
             Browse posts
           </Link>
           <Link
             href="/projects"
-            className="rounded-full border border-black/10 bg-[color:var(--accent)] px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
+            className="rounded-full border border-black/10 bg-accent px-5 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5"
           >
             View projects
           </Link>
@@ -39,7 +39,7 @@ export default async function HomePage() {
           </h2>
           <Link
             href="/posts"
-            className="text-sm font-semibold text-[color:var(--accent)]"
+            className="text-sm font-semibold text-accent"
           >
             All posts
           </Link>
@@ -50,7 +50,7 @@ export default async function HomePage() {
               key={item.id}
               className="rounded-2xl border border-black/10 bg-white/80 p-6 shadow-sm"
             >
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                 {item.type === "post" ? "Post" : "Project"}
               </p>
               <h3 className="mt-2 text-2xl font-serif tracking-tight">
@@ -58,8 +58,8 @@ export default async function HomePage() {
                   {item.title}
                 </Link>
               </h3>
-              <p className="mt-3 text-[color:var(--muted)]">{item.excerpt}</p>
-              <div className="mt-4 flex flex-wrap gap-2 text-xs text-[color:var(--muted)]">
+              <p className="mt-3 text-muted">{item.excerpt}</p>
+              <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted">
                 {item.tags.map((tag) => (
                   <span
                     key={tag}

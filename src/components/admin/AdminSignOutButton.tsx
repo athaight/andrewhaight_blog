@@ -24,7 +24,7 @@ export default function AdminSignOutButton() {
     <button
       type="button"
       onClick={handleSignOut}
-      className="hover:text-[color:var(--accent)]"
+      className="hover:text-accent"
       disabled={loading}
     >
       {loading ? "Signing out..." : "Sign out"}

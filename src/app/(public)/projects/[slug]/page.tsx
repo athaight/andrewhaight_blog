@@ -18,11 +18,11 @@ export default async function ProjectPage({
   return (
     <article className="space-y-6">
       <header className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[color:var(--muted)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted">
           Project
         </p>
         <h1 className="text-4xl font-serif tracking-tight">{item.title}</h1>
-        <p className="text-sm text-[color:var(--muted)]">{item.createdAt}</p>
+        <p className="text-sm text-muted">{item.createdAt}</p>
       </header>
       <Markdown content={item.content} />
     </article>

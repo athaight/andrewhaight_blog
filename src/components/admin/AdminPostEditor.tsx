@@ -190,7 +190,7 @@ export default function AdminPostEditor({ postId }: AdminPostEditorProps) {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[color:var(--muted)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted">
           {effectivePostId ? "Edit" : "New"}
         </p>
         <h1 className="text-3xl font-serif tracking-tight">
@@ -310,7 +310,7 @@ export default function AdminPostEditor({ postId }: AdminPostEditorProps) {
         <div className="flex flex-wrap gap-3">
           <button
             type="submit"
-            className="rounded-full border border-black/10 bg-[color:var(--accent)] px-6 py-3 text-sm font-semibold text-white"
+            className="rounded-full border border-black/10 bg-accent px-6 py-3 text-sm font-semibold text-white"
             disabled={loading}
           >
             {loading ? "Saving..." : "Save"}

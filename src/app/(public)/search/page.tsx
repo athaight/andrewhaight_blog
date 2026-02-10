@@ -12,11 +12,11 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <div className="space-y-6">
       <header className="space-y-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[color:var(--muted)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-muted">
           Search
         </p>
         <h1 className="text-4xl font-serif tracking-tight">Find a post</h1>
-        <p className="text-[color:var(--muted)]">
+        <p className="text-muted">
           Search across published posts and projects.
         </p>
       </header>
@@ -34,7 +34,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         />
         <button
           type="submit"
-          className="rounded-full border border-black/10 bg-[color:var(--accent)] px-6 py-3 text-sm font-semibold text-white"
+          className="rounded-full border border-black/10 bg-accent px-6 py-3 text-sm font-semibold text-white"
         >
           Search
         </button>
@@ -42,7 +42,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
       {query ? (
         <div className="space-y-4">
-          <p className="text-sm text-[color:var(--muted)]">
+          <p className="text-sm text-muted">
             {results.length} result{results.length === 1 ? "" : "s"} for "{query}"
           </p>
           <div className="grid gap-4">
@@ -51,19 +51,19 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 key={item.id}
                 className="rounded-2xl border border-black/10 bg-white/80 p-5"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+                <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                   {item.type}
                 </p>
                 <h2 className="mt-2 text-2xl font-serif tracking-tight">
                   <Link href={`/${item.type}s/${item.slug}`}>{item.title}</Link>
                 </h2>
-                <p className="mt-2 text-[color:var(--muted)]">{item.excerpt}</p>
+                <p className="mt-2 text-muted">{item.excerpt}</p>
               </article>
             ))}
           </div>
         </div>
       ) : (
-        <p className="text-sm text-[color:var(--muted)]">
+        <p className="text-sm text-muted">
           Enter a keyword to start searching.
         </p>
       )}

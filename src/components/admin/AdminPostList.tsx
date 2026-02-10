@@ -78,7 +78,7 @@ export default function AdminPostList() {
         >
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[color:var(--muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
                 {post.type} · {post.published ? "Published" : "Draft"}
               </p>
               <h3 className="text-xl font-serif tracking-tight">

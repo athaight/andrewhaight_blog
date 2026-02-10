@@ -6,6 +6,7 @@ const navItems = [
   { href: "/projects", label: "Projects" },
   { href: "/about", label: "About" },
   { href: "/search", label: "Search" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export default function SiteHeader() {
@@ -15,20 +16,20 @@ export default function SiteHeader() {
         <div>
           <Link
             href="/"
-            className="text-xl font-serif tracking-tight text-[color:var(--ink)]"
+            className="text-xl font-serif tracking-tight text-ink"
           >
             Andrew Haight
           </Link>
-          <p className="mt-1 text-sm text-[color:var(--muted)]">
+          <p className="mt-1 text-sm text-muted">
             Writing, notes, and projects in progress.
           </p>
         </div>
-        <nav className="flex flex-wrap gap-4 text-sm font-medium uppercase tracking-[0.2em] text-[color:var(--muted)]">
+        <nav className="flex flex-wrap gap-4 text-sm font-medium uppercase tracking-[0.2em] text-muted">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="transition-colors hover:text-[color:var(--ink)]"
+              className="transition-colors hover:text-ink"
             >
               {item.label}
             </Link>
