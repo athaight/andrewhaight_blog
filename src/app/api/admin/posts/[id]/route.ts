@@ -12,10 +12,12 @@ export async function GET(
   }
 
   const { id } = await params;
+  const isPersonal =
+    request.nextUrl.searchParams.get("scope") === "personal";
 
   const supabase = getSupabaseServiceClient();
   const { data, error } = await supabase
-    .from("posts")
+    .from(isPersonal ? "personal_posts" : "posts")
     .select("id, title, slug, excerpt, type, tags, content, published")
     .eq("id", id)
     .single();
@@ -26,7 +28,11 @@ export async function GET(
     return response;
   }
 
-  const response = NextResponse.json({ data });
+  const response = NextResponse.json({
+    data: isPersonal
+      ? { ...data, type: "personal", scope: "personal" }
+      : data,
+  });
   applyAuthCookies(adminCheck.response, response);
   return response;
 }
@@ -41,6 +47,8 @@ export async function PUT(
   }
 
   const { id } = await params;
+  const isPersonal =
+    request.nextUrl.searchParams.get("scope") === "personal";
 
   const supabase = getSupabaseServiceClient();
   const body = await request.json();
@@ -50,13 +58,13 @@ export async function PUT(
     slug: body.slug,
     content: body.content,
     excerpt: body.excerpt ?? null,
-    type: body.type,
+    type: isPersonal ? "personal" : body.type,
     tags: Array.isArray(body.tags) ? body.tags : [],
     published: Boolean(body.published),
   };
 
   const { data, error } = await supabase
-    .from("posts")
+    .from(isPersonal ? "personal_posts" : "posts")
     .update(payload)
     .eq("id", id)
     .select("id")
@@ -88,9 +96,14 @@ export async function DELETE(
   }
 
   const { id } = await params;
+  const isPersonal =
+    request.nextUrl.searchParams.get("scope") === "personal";
 
   const supabase = getSupabaseServiceClient();
-  const { error } = await supabase.from("posts").delete().eq("id", id);
+  const { error } = await supabase
+    .from(isPersonal ? "personal_posts" : "posts")
+    .delete()
+    .eq("id", id);
 
   if (error) {
     const response = NextResponse.json({ error: error.message }, { status: 400 });

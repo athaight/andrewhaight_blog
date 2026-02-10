@@ -7,7 +7,8 @@ type PostSummary = {
   id: string;
   title: string;
   slug: string;
-  type: "post" | "project";
+  type: "post" | "project" | "personal";
+  scope?: "standard" | "personal";
   published: boolean;
   created_at: string;
 };
@@ -19,7 +20,9 @@ export default function AdminPostList() {
 
   useEffect(() => {
     let active = true;
-    fetch("/api/admin/posts", { credentials: "include" })
+    fetch("/api/admin/posts?includePersonal=true", {
+      credentials: "include",
+    })
       .then(async (response) => {
         if (!response.ok) {
           throw new Error("Failed to load posts.");
@@ -44,10 +47,15 @@ export default function AdminPostList() {
     };
   }, []);
 
-  async function handleDelete(id: string) {
+  async function handleDelete(
+    id: string,
+    scope?: "personal" | "standard"
+  ) {
     if (!confirm("Delete this entry?")) return;
 
-    const response = await fetch(`/api/admin/posts/${id}`, {
+    const scopeParam = scope === "personal" ? "?scope=personal" : "";
+
+    const response = await fetch(`/api/admin/posts/${id}${scopeParam}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -79,7 +87,8 @@ export default function AdminPostList() {
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted">
-                {post.type} · {post.published ? "Published" : "Draft"}
+                {post.type === "personal" ? "Personal" : post.type} ·
+                {post.published ? " Published" : " Draft"}
               </p>
               <h3 className="text-xl font-serif tracking-tight">
                 {post.title}
@@ -88,7 +97,9 @@ export default function AdminPostList() {
             <div className="flex flex-wrap gap-3 text-sm font-semibold">
               {post.id ? (
                 <Link
-                  href={`/admin/edit/${post.id}`}
+                  href={`/admin/edit/${post.id}${
+                    post.scope === "personal" ? "?scope=personal" : ""
+                  }`}
                   className="rounded-full border border-black/10 bg-white px-4 py-2"
                 >
                   Edit
@@ -100,7 +111,7 @@ export default function AdminPostList() {
               )}
               <button
                 type="button"
-                onClick={() => handleDelete(post.id)}
+                onClick={() => handleDelete(post.id, post.scope)}
                 className="rounded-full border border-black/10 bg-white px-4 py-2 text-red-600"
               >
                 Delete

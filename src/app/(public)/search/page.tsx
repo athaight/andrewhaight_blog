@@ -43,7 +43,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       {query ? (
         <div className="space-y-4">
           <p className="text-sm text-muted">
-            {results.length} result{results.length === 1 ? "" : "s"} for "{query}"
+            {results.length} result{results.length === 1 ? "" : "s"} for
+            &quot;{query}&quot;
           </p>
           <div className="grid gap-4">
             {results.map((item) => (
