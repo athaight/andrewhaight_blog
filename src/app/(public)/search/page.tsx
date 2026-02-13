@@ -1,13 +1,21 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { searchPublishedContent } from "@/lib/content";
+import { hasPersonalAccess } from "@/lib/personalAccess";
 
 type SearchPageProps = {
-  searchParams: { q?: string };
+  searchParams: Promise<{ q?: string }>;
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const query = searchParams.q?.trim() ?? "";
-  const results = query ? await searchPublishedContent(query) : [];
+  const resolvedParams = await searchParams;
+  const query = resolvedParams.q?.trim() ?? "";
+  const cookieStore = await cookies();
+  const personalAccess = hasPersonalAccess(cookieStore);
+  const isQueryValid = query.length >= 2;
+  const { results, error } = isQueryValid
+    ? await searchPublishedContent(query, { includePersonal: personalAccess })
+    : { results: [], error: null };
 
   return (
     <div className="space-y-6">
@@ -40,12 +48,24 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </button>
       </form>
 
-      {query ? (
+      {isQueryValid ? (
         <div className="space-y-4">
           <p className="text-sm text-muted">
             {results.length} result{results.length === 1 ? "" : "s"} for
             &quot;{query}&quot;
           </p>
+          {error ? (
+            <p className="text-sm text-red-600">Search error: {error}</p>
+          ) : null}
+          {!error && results.length === 0 ? (
+            <p className="text-sm text-muted">
+              No posts found for &quot;{query}&quot;. Try different keywords or{" "}
+              <Link href="/posts" className="underline">
+                browse all posts
+              </Link>
+              .
+            </p>
+          ) : null}
           <div className="grid gap-4">
             {results.map((item) => (
               <article
@@ -56,7 +76,15 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                   {item.type}
                 </p>
                 <h2 className="mt-2 text-2xl font-serif tracking-tight">
-                  <Link href={`/${item.type}s/${item.slug}`}>{item.title}</Link>
+                  <Link
+                    href={
+                      item.type === "personal"
+                        ? `/personal/${item.slug}`
+                        : `/${item.type}s/${item.slug}`
+                    }
+                  >
+                    {item.title}
+                  </Link>
                 </h2>
                 <p className="mt-2 text-muted">{item.excerpt}</p>
               </article>
@@ -65,7 +93,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
       ) : (
         <p className="text-sm text-muted">
-          Enter a keyword to start searching.
+          Please enter a more specific search term.
         </p>
       )}
     </div>

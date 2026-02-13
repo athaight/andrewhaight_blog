@@ -1,7 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import { unstable_noStore as noStore } from "next/cache";
+import { getSupabaseServiceClient } from "@/lib/supabase/service";
 
 export type ContentType = "post" | "project";
+export type SearchContentType = ContentType | "personal";
 
 export type ContentItem = {
   id: string;
@@ -27,6 +29,17 @@ type PostRow = {
   created_at: string;
 };
 
+type SearchRow = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  type: SearchContentType;
+  tags: string[] | null;
+  created_at: string;
+  rank: number | null;
+};
+
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -43,6 +56,14 @@ function getSupabaseClient() {
   });
 }
 
+function getSupabaseServiceClientSafe() {
+  try {
+    return getSupabaseServiceClient();
+  } catch {
+    return null;
+  }
+}
+
 function mapPost(row: PostRow): ContentItem {
   return {
     id: row.id,
@@ -54,6 +75,19 @@ function mapPost(row: PostRow): ContentItem {
     tags: row.tags ?? [],
     published: row.published,
     createdAt: row.created_at,
+  };
+}
+
+function mapSearchRow(row: SearchRow): SearchItem {
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    excerpt: row.excerpt ?? "",
+    type: row.type,
+    tags: row.tags ?? [],
+    createdAt: row.created_at,
+    rank: row.rank ?? 0,
   };
 }
 
@@ -112,26 +146,50 @@ export async function getContentBySlug(slug: string, type?: ContentType) {
   return mapPost(data as PostRow);
 }
 
-export async function searchPublishedContent(rawQuery: string) {
+export type SearchResult = {
+  results: SearchItem[];
+  error: string | null;
+};
+
+export type SearchItem = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  type: SearchContentType;
+  tags: string[];
+  createdAt: string;
+  rank: number;
+};
+
+export async function searchPublishedContent(
+  rawQuery: string,
+  options?: { includePersonal?: boolean }
+): Promise<SearchResult> {
   noStore();
-  const supabase = getSupabaseClient();
-  if (!supabase) return [];
-
-  const query = rawQuery.trim().replace(/,/g, " ").replace(/[%_]/g, " ");
-  if (!query) return [];
-
-  const { data, error } = await supabase
-    .from("posts")
-    .select(
-      "id, title, slug, content, excerpt, type, tags, published, created_at"
-    )
-    .eq("published", true)
-    .or(`title.ilike.%${query}%,content.ilike.%${query}%`)
-    .order("created_at", { ascending: false });
-
-  if (error || !data) {
-    return [];
+  const includePersonal = Boolean(options?.includePersonal);
+  const supabase = includePersonal
+    ? getSupabaseServiceClientSafe()
+    : getSupabaseClient();
+  if (!supabase) {
+    return { results: [], error: "Supabase client not configured." };
   }
 
-  return data.map(mapPost);
+  const query = rawQuery.trim();
+  if (!query) return { results: [], error: null };
+
+  const { data, error } = await supabase.rpc("search_published_posts", {
+    search_query: query,
+    include_personal: includePersonal,
+  });
+
+  if (error) {
+    return { results: [], error: error.message };
+  }
+
+  if (!data) {
+    return { results: [], error: "No data returned from search." };
+  }
+
+  return { results: (data as SearchRow[]).map(mapSearchRow), error: null };
 }
