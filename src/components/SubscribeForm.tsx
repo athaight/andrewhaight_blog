@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { subscribeToNewsletter } from "@/app/actions/subscribe";
+import { usePathname } from "next/navigation";
 
 interface SubscribeFormProps {
   variant?: "inline" | "post";
@@ -16,6 +17,12 @@ export default function SubscribeForm({
     subscribeToNewsletter,
     initialState
   );
+ const pathname = usePathname();
+
+// Hide footer subscribe form on post pages (post has its own)
+if (variant === "inline" && pathname.startsWith("/posts/")) {
+  return null;
+}
 
   // After successful subscribe, just show the confirmation message
   if (state.success) {
