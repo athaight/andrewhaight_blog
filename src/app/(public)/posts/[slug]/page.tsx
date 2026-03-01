@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Markdown from "@/components/Markdown";
+import SubscribeForm  from "@/components/SubscribeForm";
 import { getContentBySlug } from "@/lib/content";
 
 export default async function PostPage({
@@ -7,7 +8,6 @@ export default async function PostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  // Next.js provides params as a Promise in async route handlers.
   const { slug } = await params;
   const item = await getContentBySlug(slug, "post");
 
@@ -25,6 +25,7 @@ export default async function PostPage({
         <p className="text-sm text-muted">{item.createdAt}</p>
       </header>
       <Markdown content={item.content} />
+      <SubscribeForm variant="post" />
     </article>
   );
 }

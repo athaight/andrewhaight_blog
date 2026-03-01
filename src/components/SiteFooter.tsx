@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Container from "./Container";
+import SubscribeForm from "./SubscribeForm";
 
 const TAP_THRESHOLD = 7;
 const RESET_MS = 2500;
@@ -40,19 +41,22 @@ export default function SiteFooter() {
   }
 
   return (
-    <footer className="mt-auto border-t border-black/10 py-6">
+    <footer className="mt-auto border-t border-black/10 py-8">
       <Container>
-        <p className="text-sm text-muted">
-          © 2024{" "}
-          <button
-            type="button"
-            onClick={handleTap}
-            className="font-semibold text-ink transition-colors hover:text-accent"
-            aria-label="Andrew Haight"
-          >
-            Andrew Haight
-          </button>
-        </p>
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <SubscribeForm variant="inline" />
+          <p className="text-sm text-muted shrink-0">
+            © 2024{" "}
+            <button
+              type="button"
+              onClick={handleTap}
+              className="font-semibold text-ink transition-colors hover:text-accent"
+              aria-label="Andrew Haight"
+            >
+              Andrew Haight
+            </button>
+          </p>
+        </div>
       </Container>
     </footer>
   );
