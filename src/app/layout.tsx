@@ -15,6 +15,11 @@ const newsreader = Newsreader({
 export const metadata: Metadata = {
   title: "Andrew Haight",
   description: "Personal writing and project notes.",
+  alternates: {
+    types: {
+      "application/rss+xml": "https://andrewhaight.com/feed.xml",
+    },
+  },
 };
 
 export default function RootLayout({
