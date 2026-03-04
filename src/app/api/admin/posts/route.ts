@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { applyAuthCookies, requireAdmin } from "@/lib/supabase/admin";
 import { getSupabaseServiceClient } from "@/lib/supabase/service";
+import { sendPostAsEmail } from "@/lib/buttondown";
 
 export async function GET(request: NextRequest) {
   const adminCheck = await requireAdmin(request);
@@ -93,6 +94,19 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({ error: message }, { status });
     applyAuthCookies(adminCheck.response, response);
     return response;
+  }
+
+  // Send as Buttondown email when publishing a blog post
+  if (payload.published && payload.type === "post") {
+    const emailResult = await sendPostAsEmail({
+      title: payload.title,
+      slug: payload.slug,
+      content: body.content ?? "",
+      excerpt: payload.excerpt ?? "",
+    });
+    if (!emailResult.ok) {
+      console.error("Failed to send Buttondown email:", emailResult.error);
+    }
   }
 
   const response = NextResponse.json({ data }, { status: 201 });
