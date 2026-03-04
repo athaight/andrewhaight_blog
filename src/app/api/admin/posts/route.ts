@@ -101,7 +101,6 @@ export async function POST(request: NextRequest) {
     const emailResult = await sendPostAsEmail({
       title: payload.title,
       slug: payload.slug,
-      content: body.content ?? "",
       excerpt: payload.excerpt ?? "",
     });
     if (!emailResult.ok) {
