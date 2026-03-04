@@ -50,6 +50,14 @@ if (variant === "inline" && pathname.startsWith("/posts/")) {
         </p>
         <form action={formAction} className="flex flex-col sm:flex-row gap-2">
           <input
+            type="text"
+            name="url_confirm"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="absolute opacity-0 h-0 w-0 pointer-events-none"
+          />
+          <input
             type="email"
             name="email"
             placeholder="you@example.com"
@@ -78,6 +86,14 @@ if (variant === "inline" && pathname.startsWith("/posts/")) {
         Get notified when I post something new.
       </p>
       <form action={formAction} className="flex gap-2">
+        <input
+          type="text"
+          name="url_confirm"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="absolute opacity-0 h-0 w-0 pointer-events-none"
+        />
         <input
           type="email"
           name="email"
