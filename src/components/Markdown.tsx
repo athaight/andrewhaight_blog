@@ -59,6 +59,21 @@ export default function Markdown({ content }: MarkdownProps) {
               {children}
             </code>
           ),
+          ul: ({ children, ...props }) => (
+            <ul className="list-disc pl-6 space-y-1" {...props}>
+              {children}
+            </ul>
+          ),
+          ol: ({ children, ...props }) => (
+            <ol className="list-decimal pl-6 space-y-1" {...props}>
+              {children}
+            </ol>
+          ),
+          li: ({ children, ...props }) => (
+            <li className="leading-7" {...props}>
+              {children}
+            </li>
+          ),
         }}
       >
         {content}
