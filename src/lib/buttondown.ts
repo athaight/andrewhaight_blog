@@ -5,7 +5,6 @@
 export async function sendPostAsEmail(post: {
   title: string;
   slug: string;
-  content: string;
   excerpt: string;
 }): Promise<{ ok: boolean; error?: string }> {
   const apiKey = process.env.BUTTONDOWN_API_KEY;
@@ -16,13 +15,11 @@ export async function sendPostAsEmail(post: {
   const siteUrl = "https://andrewhaight.com";
   const postUrl = `${siteUrl}/posts/${post.slug}`;
 
-  // Buttondown supports Markdown in the body
+  // Send just the excerpt with a link to drive traffic to the site
   const body = [
-    post.content,
+    post.excerpt,
     "",
-    "---",
-    "",
-    `[Read on the web](${postUrl})`,
+    `[Read the full post](${postUrl})`,
   ].join("\n");
 
   const res = await fetch("https://api.buttondown.email/v1/emails", {
