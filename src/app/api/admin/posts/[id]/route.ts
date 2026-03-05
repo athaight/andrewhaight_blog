@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { applyAuthCookies, requireAdmin } from "@/lib/supabase/admin";
 import { getSupabaseServiceClient } from "@/lib/supabase/service";
+import { sendPostAsEmail } from "@/lib/buttondown";
 
 export async function GET(
   request: NextRequest,
@@ -51,7 +52,16 @@ export async function PUT(
     request.nextUrl.searchParams.get("scope") === "personal";
 
   const supabase = getSupabaseServiceClient();
+  const table = isPersonal ? "personal_posts" : "posts";
   const body = await request.json();
+
+  // Check previous published state so we only email on first publish
+  const { data: existing } = await supabase
+    .from(table)
+    .select("published")
+    .eq("id", id)
+    .single();
+  const wasPreviouslyPublished = existing?.published ?? false;
 
   const payload = {
     title: body.title,
@@ -64,7 +74,7 @@ export async function PUT(
   };
 
   const { data, error } = await supabase
-    .from(isPersonal ? "personal_posts" : "posts")
+    .from(table)
     .update(payload)
     .eq("id", id)
     .select("id")
@@ -79,6 +89,22 @@ export async function PUT(
     const response = NextResponse.json({ error: message }, { status });
     applyAuthCookies(adminCheck.response, response);
     return response;
+  }
+
+  // Send as Buttondown email when a blog post transitions to published
+  if (
+    payload.published &&
+    !wasPreviouslyPublished &&
+    payload.type === "post"
+  ) {
+    const emailResult = await sendPostAsEmail({
+      title: payload.title,
+      slug: payload.slug,
+      excerpt: payload.excerpt ?? "",
+    });
+    if (!emailResult.ok) {
+      console.error("Failed to send Buttondown email:", emailResult.error);
+    }
   }
 
   const response = NextResponse.json({ data });

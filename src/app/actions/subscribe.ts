@@ -9,6 +9,13 @@ export async function subscribeToNewsletter(
   _prevState: SubscribeResult,
   formData: FormData
 ): Promise<SubscribeResult> {
+  // Honeypot: bots fill this hidden field, real users don't
+  const honeypot = formData.get("url_confirm")?.toString();
+  if (honeypot) {
+    // Silently reject — return fake success so bots don't retry
+    return { success: true, message: "Check your inbox — I sent a confirmation email." };
+  }
+
   const email = formData.get("email")?.toString().trim();
 
   if (!email) {
