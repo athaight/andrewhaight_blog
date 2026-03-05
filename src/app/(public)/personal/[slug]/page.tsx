@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Markdown from "@/components/Markdown";
 import { hasPersonalAccess } from "@/lib/personalAccess";
 import { getPersonalContentBySlug } from "@/lib/personalContent";
+import { formatDate, getReadingTimeString } from "@/lib/formatters";
 
 export default async function PersonalPostPage({
   params,
@@ -29,7 +30,7 @@ export default async function PersonalPostPage({
           Personal post
         </p>
         <h1 className="text-4xl font-serif tracking-tight">{item.title}</h1>
-        <p className="text-sm text-muted">{item.createdAt}</p>
+        <p className="text-sm text-muted">{formatDate(item.createdAt)} · {getReadingTimeString(item.content)}</p>
       </header>
       <Markdown content={item.content} />
     </article>

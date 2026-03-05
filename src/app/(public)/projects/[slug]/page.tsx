@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Markdown from "@/components/Markdown";
 import { getContentBySlug } from "@/lib/content";
+import { formatDate, getReadingTimeString } from "@/lib/formatters";
 
 export default async function ProjectPage({
   params,
@@ -22,7 +23,7 @@ export default async function ProjectPage({
           Project
         </p>
         <h1 className="text-4xl font-serif tracking-tight">{item.title}</h1>
-        <p className="text-sm text-muted">{item.createdAt}</p>
+        <p className="text-sm text-muted">{formatDate(item.createdAt)} · {getReadingTimeString(item.content)}</p>
       </header>
       <Markdown content={item.content} />
     </article>
